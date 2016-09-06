@@ -40,6 +40,7 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
 	private string itemId = "";
 
 	public InventoryHandler inventoryHandler;
+    public QuestManager questManager;
 
     [SerializeField] 
     private Material boundingBoxMaterial = null;
@@ -127,7 +128,10 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
 						if (buttonImage != null)
 						{
 							buttonImage.sprite = inventoryHandler.m_icons.Find(sprite => sprite.name.Equals(lastSeenItem.id));
-						}
+                            questManager.SetLastSeenImage(buttonImage);
+                            questManager.SetLastSeenItem(lastSeenItem.id);
+
+                        }
 					}
                 }
             }
