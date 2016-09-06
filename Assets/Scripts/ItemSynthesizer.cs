@@ -3,35 +3,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+public class Item {
+	public string id;
+	public List<string> triggerWords;
+	public Item(string _id, List<string> _triggerWords){
+		this.id = _id;
+		this.triggerWords = _triggerWords;
+	}
+	public override string ToString()
+	{
+		return string.Format("[Item] "+id);
+	}
+}
 
 public static class ItemSynthesizer {
-
-	public static string[] Items = {
-		"Nun",
-		"Tentacle",
-		"Dildo",
-		"Cuffs",
-		"Gimp",
-		"Alien",
-		"Pyramid",
-		"Chicken",
-		"Donald",
-		"Pikachu",
-		"Drugs",
-		"RealityTV",
-		"Pizza",
-		"Veggies",
-		"Aerobics",
-		"Charity",
-		"Bono",
-		"Cross"
-	};
 
 	private static Dictionary<string,string> itemDB;
 
 	private static bool initialized = false;
 
 	private static Dictionary<string,List<string>> synonymDB;
+	private static List<Item> availableItems;
 
 	private static void ReadItemDatabase()
 	{
@@ -40,55 +32,46 @@ public static class ItemSynthesizer {
 		foreach ( string line in lines )
 		{
 			var values = line.Split(',');
+			List<string> triggers = new List<string>();
 			for (int i = 1; i < values.Length; i++)
 			{
-				Debug.Log(values[i]);
-				if (!String.IsNullOrEmpty(values[i]) && !itemDB.ContainsKey(values[i].ToLowerInvariant()))
-					itemDB.Add(values[i].ToLowerInvariant(),values[0]);
+				if (!String.IsNullOrEmpty(values[i]) && !triggers.Contains(values[i].ToLowerInvariant()))
+				{
+					//itemDB.Add(values[i].ToLowerInvariant(),values[0]);
+					triggers.Add(values[i].ToLowerInvariant());
+
+				}
 			}
+			availableItems.Add(new Item(values[0],triggers));
 		}
 	}
 
-	private static string findRandomItemFromSynonyms(string input)
+	private static Item findItemFromSynonyms(string input)
 	{
-		string item;
-		if (itemDB.TryGetValue(input.ToLowerInvariant(),out item))
-			return item;
+		Item foundItem = availableItems.Find(item => item.triggerWords.Contains(input));
+		if (foundItem != null)
+			return foundItem;
 		else
-			return "";
-	}
-
-	private static string findRandomItemFromDB()
-	{
-		int index = (int)UnityEngine.Random.Range(0,Items.Length);
-		return Items[index];
+			return null;
 	}
 
 	public static void Initialize()
 	{
-		itemDB = FileUtil.Read(Config.ItemDataPath);
+		if (availableItems == null)
+			availableItems = new List<Item>();
+		//itemDB = FileUtil.Read(Config.ItemDataPath);
 		ReadItemDatabase();
 		if (itemDB == null)
 			itemDB = new Dictionary<string, string>();
 		initialized = true;
 	}
 
-	public static string Synthesize(string seed)
+	public static Item Synthesize(string seed)
 	{
 		if (initialized)
 		{
-			if (itemDB.ContainsKey(seed))
-				return itemDB[seed];
-			else
-			{
-				string item = findRandomItemFromSynonyms(seed);
-				if (!String.IsNullOrEmpty(item))
-				{
-					itemDB.Add(seed,item);
-					FileUtil.Write(itemDB,Config.ItemDataPath);
-				}
-				return item;
-			}
+			Item item = findItemFromSynonyms(seed);
+			return item;
 		}
 		else
 		{
