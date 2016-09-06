@@ -34,7 +34,7 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
     private bool mVideoBackgroundChanged;
 
     private readonly List<WordResult> mSortedWords = new List<WordResult>();
-    private Text[] mDisplayedWords;
+    //private Text[] mDisplayedWords;
 
 	private Item lastSeenItem;
 	private string itemId = "";
@@ -77,7 +77,7 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
             vuforiaBehaviour.RegisterVideoBgEventHandler(this);
         }
 
-        mDisplayedWords = textRecoCanvas ? textRecoCanvas.GetComponentsInChildren<Text>(true) : new Text[0];
+        //mDisplayedWords = textRecoCanvas ? textRecoCanvas.GetComponentsInChildren<Text>(true) : new Text[0];
     }
 
     void OnRenderObject()
@@ -103,10 +103,10 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
             }
             
             // Clear the content of the displayed words
-            foreach (var dw in mDisplayedWords)
+            /*foreach (var dw in mDisplayedWords)
             {
                 dw.text = "";
-            }
+            }*/
 
             // Update the list of words displayed
 			mSortedWords.RemoveAll(p => string.IsNullOrEmpty(p.Word.StringValue));
@@ -121,7 +121,7 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
 					UnityEngine.UI.Image buttonImage = GameObject.Find("ButtonImage").GetComponent<UnityEngine.UI.Image>();
 					if (lastSeenItem != null)
 					{
-						mDisplayedWords[0].text = lastSeenItem.id;
+						//mDisplayedWords[0].text = lastSeenItem.id;
 						Debug.Log(lastSeenItem);
 
 						if (buttonImage != null)
