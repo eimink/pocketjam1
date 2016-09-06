@@ -42,7 +42,7 @@ public static class ItemSynthesizer {
 
 				}
 			}
-			availableItems.Add(new Item(values[0],triggers));
+			availableItems.Add(new Item(values[0].ToLowerInvariant(),triggers));
 		}
 	}
 

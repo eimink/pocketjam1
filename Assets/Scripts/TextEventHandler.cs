@@ -39,6 +39,8 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
 	private Item lastSeenItem;
 	private string itemId = "";
 
+	public InventoryHandler inventoryHandler;
+
     [SerializeField] 
     private Material boundingBoxMaterial = null;
     #endregion //PRIVATE_MEMBERS
@@ -107,20 +109,33 @@ public class TextEventHandler : MonoBehaviour, ITextRecoEventHandler, IVideoBack
             }
 
             // Update the list of words displayed
-            int wordIndex = 0;
 			mSortedWords.RemoveAll(p => string.IsNullOrEmpty(p.Word.StringValue));
 			for (int i = 0; i < mSortedWords.Count; i++)
             {
 				var word = mSortedWords[i];
+
 				if (word.Word != null && !string.IsNullOrEmpty(word.Word.StringValue) && itemId != word.Word.StringValue)
                 {
 					itemId = word.Word.StringValue;
 					lastSeenItem = ItemSynthesizer.Synthesize(itemId);
+					UnityEngine.UI.Image buttonImage = GameObject.Find("ButtonImage").GetComponent<UnityEngine.UI.Image>();
 					if (lastSeenItem != null)
+					{
 						mDisplayedWords[0].text = lastSeenItem.id;
+						Debug.Log(lastSeenItem);
+
+						if (buttonImage != null)
+						{
+							buttonImage.sprite = inventoryHandler.m_icons.Find(sprite => sprite.name.Equals(lastSeenItem.id));
+						}
+					}
                 }
-                wordIndex++;
             }
+			if (mSortedWords.Count == 0)
+			{
+				UnityEngine.UI.Image buttonImage = GameObject.Find("ButtonImage").GetComponent<UnityEngine.UI.Image>();
+				buttonImage.sprite = inventoryHandler.m_icons.Find(sprite => sprite.name == "empty");
+			}
         }
     }
 

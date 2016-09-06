@@ -6,6 +6,7 @@ using System.Linq;
 
 public class InventoryHandler : MonoBehaviour {
 
+	public List<Sprite> m_icons;
 
 	private List<Item> m_inventory;
 
